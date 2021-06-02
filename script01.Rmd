@@ -44,5 +44,5 @@ head(muestra)
 #### 1. Estimar el ingreso promedio mensual de los trabajadores
 
 ```{r}
-
+# Estimación del promedio
 ```
