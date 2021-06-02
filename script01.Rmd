@@ -1,0 +1,48 @@
+---
+title: "Muestreo aleatorio simple"
+author: "Armando Jhunior"
+date: "2/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **Caso: Tienda ABC**
+
+ABC es una empresa fundada en el año 2010, se dedica a la producción de bolsas de cemento, la empresa cuenta con locales principalmente en Lima y también en Provincias. El gerente de la empresa desea realizar un estudio con el objetivo principal de estimar el ingreso medio mensual (en soles) de los trabajadores, para ello se aplica a la información disponible un muestreo aleatorio simple con un tamaño de muestra de 40. Las variables utilizadas son:
+
+- Número de hijos
+- Ingreso mensual (en soles)
+- Turno (mañana, tarde)
+- Puesto de trabajo (ingeniero, obrero, supervisor)
+
+Los datos se muestran en el archivo cemento.xlsx
+
+```{r}
+library(readxl)
+data <- read_xlsx("cemento.xlsx")
+colnames(data)    # variables
+dim(data)         # dimensión del dataframe
+```
+
+### Fase de selección de la muestra
+
+```{r}
+n <- 40           # tamaño de muestra
+N <- dim(data)[1] # tamaño de población
+f <- n/N          # fracción de muestreo
+
+# selección de 40 índices
+indices <- sort(sample(N, n, replace = F))
+# muestra
+muestra <- data[indices, ]
+head(muestra)
+```
+
+#### 1. Estimar el ingreso promedio mensual de los trabajadores
+
+```{r}
+
+```
