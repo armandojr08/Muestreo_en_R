@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(latex2exp)
 ```
 
 ## **Caso: Tienda ABC**
@@ -29,10 +30,13 @@ dim(data)         # dimensión del dataframe
 
 ### Fase de selección de la muestra
 
-```{r}
+```{r, message=FALSE}
 n <- 40           # tamaño de muestra
 N <- dim(data)[1] # tamaño de población
 f <- n/N          # fracción de muestreo
+
+RNGkind(sample.kind = "Rounding")
+set.seed(2021)
 
 # selección de 40 índices
 indices <- sort(sample(N, n, replace = F))
@@ -41,8 +45,61 @@ muestra <- data[indices, ]
 head(muestra)
 ```
 
-#### 1. Estimar el ingreso promedio mensual de los trabajadores
+#### Los datos muestrales del ingreso mensual del cliente, se ajustarán a una distribución normal
+
+$H_{0}$:Los datos se ajustan a una distribución normal
+
+$H_{1}$:Los datos se ajustan a una distribución normal
 
 ```{r}
-# Estimación del promedio
+shapiro.test(muestra$`Ingreso mensual`)
+
+if (shapiro.test(muestra$`Ingreso mensual`)$p > 0.05) {
+  print("No hay suficiente evidencia estadística para rechazar la hipótesis nula")
+} else {
+  print("Hay suficiente estadística para rechazar la hipótesis nula")
+}
+
+```
+
+### **Preguntas**
+
+#### 1. Estimar el ingreso promedio mensual de los trabajadores
+
+```{r, warning=FALSE}
+ybar <- mean(muestra$`Ingreso mensual`)
+s2 <- var(muestra$`Ingreso mensual`)
+vybar <- (s2/n)*(1-f) # varianza del estimador
+eeybar <- sqrt(vybar)
+cvybar <- eeybar*100/ybar
+
+# Intervalos de confianza a un 95% para la media poblacional
+LI <- ybar - qnorm(1-0.05/2)*eeybar
+LS <- ybar + qnorm(1-0.05/2)*eeybar
+c(LI,LS)
+
+# Intervalos de confianza a un 95% para el total poblacional
+n*c(LI,LS)
+
+```
+
+#### 1. Estimar la proporción de trabajadores que trabajan en el turno tarde
+
+```{r}
+unique(muestra$Turno)            # valores únicos de la variable
+table(muestra$Turno)             # tabla de frecuencias
+prop.table(table(muestra$Turno)) # tabla de proporciones
+
+p <- prop.table(table(muestra$Turno))[2]
+vp <- p*(1-p)*(1-f)/(n-1)
+eep <- sqrt(vp)
+cvp <- eep*100/p
+
+# Intervalos de confianza a un 95% para la proporción
+LI <- p - qnorm(1-0.05/2)*eep
+LS <- p + qnorm(1-0.05/2)*eep
+c(LI,LS)
+
+# Intervalos de confianza a un 95% para el total poblacional
+c(floor(N*LI), ceiling(N*LS))
 ```
